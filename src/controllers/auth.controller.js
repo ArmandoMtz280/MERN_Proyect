@@ -1,7 +1,7 @@
 import User from "../models/user.model.js"
 import bcrypt from "bcryptjs"; // incriptacion
 //import jwt from "jsonwebtoken" // genera token
-import { createAccessToken } from "../libs/jwt.js";
+import { createAccessToken } from "../libs/jwt.js"; // importa funcion para crear token
 
 
 export const register = async (req, res) => {
@@ -35,9 +35,49 @@ export const register = async (req, res) => {
 
         //res.send('registrando...    ');
        }catch(error){
-          console.log(error);3
+          res.status(500).json({error: error.message})
        }
     
 };
 
-export const login = (req, res) => {res.send('login')}
+export const login = async (req, res) => {
+
+    const {email, password} = req.body;
+          console.log(email, password);
+
+
+       try{
+
+         const userFound = await User.findOne({email});
+               if(!userFound) return res.status(400).json({message: "User not Found"}) // valida si encontro el usuario
+         
+         const isMatch = await bcrypt.compare(password, userFound.password); //se compara la contaseña que usuario captura
+               if(!isMatch) return res.status(400).json({messagge: "incorrect password"})
+
+       
+
+      
+       const token = await createAccessToken({ id: userFound._id}) //crea el token
+       
+       res.cookie('token', token); // el metodo cookie de express crea la cookie para la respuesta
+       res.json({
+          id: userFound._id,
+          username: userFound.username,
+          email: userFound.email,
+          createdAT: userFound.createdAt,
+          updatedAt: userFound.updatedAt,
+       }); // lo devuelve al front (es el response)
+
+        console.log(userFound);
+
+        //res.send('registrando...    ');
+       }catch(error){
+          res.status(500).json({error: error.message})
+       }
+    
+};
+
+export const logout = (req, res) => {
+   res.cookie("token", "", { expires: new Date(0) });
+   return res.sendStatus(200);
+}
