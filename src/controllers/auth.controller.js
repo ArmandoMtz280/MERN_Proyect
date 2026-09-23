@@ -67,6 +67,7 @@ export const login = async (req, res) => {
           createdAT: userFound.createdAt,
           updatedAt: userFound.updatedAt,
        }); // lo devuelve al front (es el response)
+       
 
         console.log(userFound);
 
