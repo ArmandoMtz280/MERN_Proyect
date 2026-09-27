@@ -3,9 +3,9 @@
  * lo puedan utilizar
  */
 
-import { createContext, useState, useContext } from "react";
+import { createContext, useState, useContext, useEffect } from "react";
 
-import { registerRequest } from "../api/auth";
+import { registerRequest, loginrequest } from "../api/auth";
 import { is } from "zod/v4/locales";
 
 export const AuthContext = createContext();
@@ -45,12 +45,35 @@ export const AuthProvider = ({children}) => {
             console.log(error.response);
             setErrors(error.response.data)
         }
+    };
+
+    const signin = async (user) => {
+        try{
+            const res = await loginrequest(user);
+            console.log(user);
+        }catch(error){
+            if(Array.isArray(error.response.data)){
+                return setErrors(error.response.data)
+            }
+            setErrors([error.response.data.message])
+        }
     }
+
+    useEffect(() => {
+       if(errors.length > 0) {
+        const timer = setTimeout(() => {
+             setErrors([])
+          }, 1000)
+
+          return () => clearTimeout(timer);
+       }
+    }, [errors])
 
     return (
 
         <AuthContext.Provider value={{
            signup,
+           signin,
            user,
            isAuthenticated,
            errors,

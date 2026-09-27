@@ -1,6 +1,7 @@
 import {useForm} from "react-hook-form"
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom" // importa navegacion
+import { useNavigate, Link } from "react-router-dom" // importa navegacion
+
 
 //import { registerRequest } from "../api/auth"
 import { useAuth } from "../context/AuthContext"
@@ -44,6 +45,9 @@ export default function RegisterPage() {
               {errors.password && ( <p className="text-red-500">Password es requerido</p> ) }
             <button type="submit">Register</button>
         </form>
+        <p className="flex gap-x-2  justify-between font-bold">
+           Already have an account? <Link to="/login" className="text-sky-500">Login</Link>
+        </p>
       </div>
    );
 
