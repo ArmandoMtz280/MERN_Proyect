@@ -8,7 +8,7 @@ import tasksRoutes from "./routes/tasks.routes.js"
 
 const app = express(); // Servidor
       
-      app.use(cors({origin: "http://localhost:5173"})); // permite comunicacion entre dominios
+      app.use(cors({origin: "http://localhost:5173", credentials: true})); // permite comunicacion entre dominios
       app.use(morgan('dev'));
       app.use(express.json()); // para convertir el request body en formato json y poder verlo en consola
       app.use(cookieParser()); // visualizar cookies en json
