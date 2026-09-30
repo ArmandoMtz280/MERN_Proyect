@@ -10,7 +10,7 @@ export default function LoginPage() {
    const {signin, errors: signinErrors} = useAuth();
 
    const onSubmit = handleSubmit((data) => {
-      console.log(data, "Desde LoginPage")
+      console.log(data)
       signin(data);
    })
 

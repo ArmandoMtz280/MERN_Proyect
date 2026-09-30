@@ -5,8 +5,8 @@
 
 import { createContext, useState, useContext, useEffect } from "react";
 
-import { registerRequest, loginrequest } from "../api/auth";
-import { is } from "zod/v4/locales";
+import { registerRequest, loginrequest, verifyTokenRequest } from "../api/auth";
+import Cookies from "js-cookie"; // nos permite ver las cookies del front
 
 export const AuthContext = createContext();
 
@@ -30,7 +30,7 @@ export const AuthProvider = ({children}) => {
     const [ user, setUser ] = useState(null) // usuario q va ser leido en toda la app
     const [isAuthenticated, setIsAuthenticated] = useState(false); // verifica que el usario este autenticado
     const [ errors, setErrors] = useState([]);
-
+    const [loading, setLoading] = useState(true);
 
 
 
@@ -50,7 +50,9 @@ export const AuthProvider = ({children}) => {
     const signin = async (user) => {
         try{
             const res = await loginrequest(user);
-            console.log(user);
+            console.log(res);
+            setIsAuthenticated(true); // pasa a "true" si esta autenticado
+            setUser(res.data)
         }catch(error){
             if(Array.isArray(error.response.data)){
                 return setErrors(error.response.data)
@@ -67,16 +69,51 @@ export const AuthProvider = ({children}) => {
 
           return () => clearTimeout(timer);
        }
-    }, [errors])
+    }, [errors]);
+
+    useEffect(() => { // Hace la peticion al backend para cerificar el token verifyTokenRequest()
+  
+    async function checkLogin(){
+
+        const cookies = Cookies.get() // Nos permite obtener todos sus valores
+       
+        if(!cookies.token){
+            setIsAuthenticated(false);
+            setLoading(false)
+            return setUser(null);
+        }
+            try{
+                const res = await verifyTokenRequest(cookies.token);
+                console.log(res)
+                if(!res.data) {
+                setIsAuthenticated(false);
+                setLoading(false);
+                return;
+                }
+                setIsAuthenticated(true);
+                setUser(res.data); 
+                setLoading(false);   
+            }catch(error){
+                setIsAuthenticated(false);
+                setUser(null)
+                setLoading(false);
+            }
+        }
+       
+       checkLogin();
+
+    }, [])
 
     return (
 
         <AuthContext.Provider value={{
            signup,
            signin,
+           loading,
            user,
            isAuthenticated,
            errors,
+
         }}>
            {children}
         </AuthContext.Provider>
