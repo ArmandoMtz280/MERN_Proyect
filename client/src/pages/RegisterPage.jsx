@@ -18,14 +18,18 @@ export default function RegisterPage() {
      if(isAuthenticated) navigate("/tasks"); // si es true lo redirecciona
 
    }, [isAuthenticated]);
-
-   
    
    const onSubmit =  handleSubmit( async (values) => {
             // const res = await registerRequest(values) // manda peticion a backend
             // console.log(res)
                signup(values)
             });
+
+   useEffect(() => { /////************ */
+
+     if(isAuthenticated) navigate("/tasks");
+
+   }, isAuthenticated)         
 
    return(
       <div className="bg-zinc-800 max-w-md p-10 rounded-md">
