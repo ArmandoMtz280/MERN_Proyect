@@ -1,21 +1,44 @@
 import { useForm } from "react-hook-form";
 import { useTasks} from "../context/TasksContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom"; // useParams: Obtiene los datos dinamicos q van en la URL
+import { useEffect } from "react";
 
 
 
 export default function TaskFormPage(){
 
-   const {register, handleSubmit} = useForm(); 
+   const {register, handleSubmit, setValue} = useForm(); 
    
-   const {createTask} = useTasks(); //extrae la tareas del TasksCcontext
+   const {createTask, getTask, updateTask} = useTasks(); //extrae la tareas del TasksCcontext
    
    const navigate = useNavigate();
+   const params = useParams();
+
+   useEffect(() => {
+     
+   async function loadTask(){
+        if(params.id){
+            const task = await getTask(params.id);
+            console.log(task);
+            setValue("title", task.title);
+            setValue("description", task.description);
+        }
+     };
+
+     loadTask();
+
+   }, []);
 
    const onSubmit = handleSubmit((data) => {
-       createTask(data); // Crea la tarea
+
+       if(params.id){
+           updateTask(params.id, data);
+       }else{
+           createTask(data); // Crea la tarea
+       }
+
        navigate("/tasks"); // Envia al paga de tasks
-   })
+   });
 
    return(
        <div className="bg-zinc-800 max-w-md w-full p-10 rounded-md">

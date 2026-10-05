@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from "react";
-import { createTaskRequest, getTasksRequest, deleteTaskRequest} from "../api/task";
+import { createTaskRequest, getTasksRequest, deleteTaskRequest, getTaskRequest, updateTaskRequest} from "../api/task";
 
 
 const TaskContext = createContext(); // Se crea el contexto
@@ -32,9 +32,9 @@ export function TaskProvider({ children }) {
         }catch(error){
            console.error(error)
         }
-    }
+    };
 
-    const deleteTask = async (id) => {
+    const deleteTask = async (id) => { // Borra tareas y actualiza el front
         try{
            const res = await deleteTaskRequest(id);
            if(res.status === 204) setTasks(tasks.filter(task => task._id !== id));// filtra el id de las tareas q sean diferentes al id q se le paso y crea un nuevo arreglo y actualiza en front
@@ -42,7 +42,24 @@ export function TaskProvider({ children }) {
 
         }
         
-    }
+    };
+
+    const getTask = async (id) => { 
+       try{
+        const res = await getTaskRequest(id);
+        return res.data
+       }catch(error){
+         console.error(error);
+       }
+    };
+
+    const updateTask = async (id, task) => {
+        try {
+          await updateTaskRequest(id, task)
+        } catch(error){
+            console.error(error);
+        }
+    };
 
     return(
  
@@ -51,6 +68,8 @@ export function TaskProvider({ children }) {
            createTask,
            getTasks,
            deleteTask,
+           getTask,
+           updateTask,
         }}>
            {children}
         </TaskContext.Provider>
