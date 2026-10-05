@@ -1,5 +1,6 @@
 import { useForm } from "react-hook-form";
 import { useTasks} from "../context/TasksContext";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -9,9 +10,11 @@ export default function TaskFormPage(){
    
    const {createTask} = useTasks(); //extrae la tareas del TasksCcontext
    
+   const navigate = useNavigate();
 
    const onSubmit = handleSubmit((data) => {
-       createTask(data);
+       createTask(data); // Crea la tarea
+       navigate("/tasks"); // Envia al paga de tasks
    })
 
    return(
