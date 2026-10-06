@@ -39,7 +39,7 @@ export default function LoginPage() {
               {errors.email && ( <p className="text-red-500">Email es requerido</p> ) }
               <input type="password" {...register("password", {required: true})} className="w-full bg-zinc-600  text-white px-4 py-2 rounded-md my-2" placeholder="Password"/>
               {errors.password && ( <p className="text-red-500">Password es requerido</p> ) }
-              <button type="submit">Login</button>
+              <button type="submit" className="bg-sky-500 text-white px-4 py-2 rounded-md my-2">Login</button>
         </form>
         <p className="flex gap-x-2  justify-between font-bold">
            Don't have an account? <Link to="/register" className="text-sky-500">Sign up</Link>
